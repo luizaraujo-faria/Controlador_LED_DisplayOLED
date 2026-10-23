@@ -9,7 +9,9 @@
 
 // LED E BUZZER
 const int ledVerde = 2;
-const int buzzer = 6;
+const int ledAzul = 3;
+const int ledVermelho = 4;
+const int buzzer = 5;
 
 // APLICA CONFIGURAÇÕES NA TELA
 Adafruit_SSD1306 tela(
@@ -33,6 +35,8 @@ void setup() {
   // Serial.println("\nDigite 'm-<Mensagem>' para enviar uma mensagem ao display");
 
   pinMode(ledVerde, OUTPUT);
+  pinMode(ledAzul, OUTPUT);
+  pinMode(ledVermelho, OUTPUT);
   pinMode(buzzer, OUTPUT);
 
   if (!tela.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
@@ -56,9 +60,11 @@ void setup() {
   tela.println("Sistema com led");
 
   tela.display();
+  inativo();
 }
 
 void loop() {
+  
   // VERIFICA SE O TERMINAL RECEBEU ALGO
   if (Serial.available() > 0) {
     
@@ -77,26 +83,29 @@ void loop() {
   }
 
   if(sinal == '1'){
+    apagarLeds();
     acenderLed();
   }
   
   if(sinal == '2'){
+    apagarLeds();
     piscarLed();
   }
 
   if(sinal == '0'){
-    apagarLed();
+    apagarLeds();
+    inativo();
   }
 }
 
 void piscarLed(){
   // ACENDE O LED
-  digitalWrite(ledVerde, HIGH);
+  digitalWrite(ledVermelho, HIGH);
   // APITA O BUZZER
   tone(buzzer, 3200);
   delay(500);
   // APAGA O LED
-  digitalWrite(ledVerde, LOW);
+  digitalWrite(ledVermelho, LOW);
   // DESLIGA O BUZZER
   noTone(buzzer);
   delay(500);
@@ -105,11 +114,20 @@ void piscarLed(){
 void acenderLed(){
   digitalWrite(ledVerde, HIGH);
   tone(buzzer, 3200);
+  delay(1000);
+  noTone(buzzer);
+  delay(1000);
 }
 
-void apagarLed(){
-  digitalWrite(ledVerde, LOW);
+void inativo(){
+  digitalWrite(ledAzul, HIGH);
   noTone(buzzer);
+}
+
+void apagarLeds(){
+  digitalWrite(ledAzul, LOW);
+  digitalWrite(ledVerde, LOW);
+  digitalWrite(ledVermelho, LOW);
 }
 
 void atualizarDisplay(char sinal){
